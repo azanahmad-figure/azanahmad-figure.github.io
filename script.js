@@ -1,35 +1,20 @@
-// Encryption and decryption helper functions
-const encrypt = (text, key = "secret") => {
-  return btoa(unescape(encodeURIComponent(text + key))); // Base64 + key
-};
-const decrypt = (encrypted, key = "secret") => {
-  try {
-    const decoded = decodeURIComponent(escape(atob(encrypted)));
-    return decoded.replace(key, ""); // Remove key from decrypted text
-  } catch {
-    return null; // If decryption fails
-  }
-};
+// Simulated backend using localStorage
+const users = JSON.parse(localStorage.getItem("users")) || {};
+const notes = JSON.parse(localStorage.getItem("notes")) || {};
 
-// Simulated backend using metadata.json (mocked for static app)
-let users = {}; // Decrypted users from metadata.json
+// Elements
+const signupForm = document.getElementById("signup-form");
+const loginForm = document.getElementById("login-form");
+const authSection = document.getElementById("auth-section");
+const notepadSection = document.getElementById("notepad-section");
+const notepad = document.getElementById("notepad");
+const saveBtn = document.getElementById("save-btn");
+const logoutBtn = document.getElementById("logout-btn");
+
 let currentUser = null;
 
-// Fetch metadata.json
-fetch("metadata.json")
-  .then((res) => res.json())
-  .then((data) => {
-    // Decrypt stored user data
-    for (const user in data) {
-      users[user] = decrypt(data[user]);
-    }
-  })
-  .catch(() => {
-    console.error("Could not load metadata.json");
-  });
-
 // Sign up
-document.getElementById("signup-form").addEventListener("submit", (e) => {
+signupForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const username = document.getElementById("signup-username").value;
   const password = document.getElementById("signup-password").value;
@@ -40,49 +25,42 @@ document.getElementById("signup-form").addEventListener("submit", (e) => {
   }
 
   users[username] = password;
-  updateMetadataFile();
+  notes[username] = "";
+  localStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("notes", JSON.stringify(notes));
   alert("Signup successful! You can now log in.");
-  document.getElementById("signup-form").reset();
+  signupForm.reset();
 });
 
 // Login
-document.getElementById("login-form").addEventListener("submit", (e) => {
+loginForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const username = document.getElementById("login-username").value;
   const password = document.getElementById("login-password").value;
 
   if (users[username] === password) {
     currentUser = username;
-    document.getElementById("auth-section").style.display = "none";
-    document.getElementById("notepad-section").style.display = "block";
+    authSection.style.display = "none";
+    notepadSection.style.display = "block";
+    notepad.value = notes[currentUser];
   } else {
     alert("Invalid credentials!");
   }
 });
 
-// Save notes (localStorage only for simplicity)
-document.getElementById("save-btn").addEventListener("click", () => {
+// Save notes
+saveBtn.addEventListener("click", () => {
   if (currentUser) {
-    localStorage.setItem(currentUser, document.getElementById("notepad").value);
+    notes[currentUser] = notepad.value;
+    localStorage.setItem("notes", JSON.stringify(notes));
     alert("Notes saved!");
   }
 });
 
 // Logout
-document.getElementById("logout-btn").addEventListener("click", () => {
+logoutBtn.addEventListener("click", () => {
   currentUser = null;
-  document.getElementById("auth-section").style.display = "block";
-  document.getElementById("notepad-section").style.display = "none";
-  document.getElementById("notepad").value = "";
+  authSection.style.display = "block";
+  notepadSection.style.display = "none";
+  notepad.value = "";
 });
-
-// Update metadata.json
-function updateMetadataFile() {
-  const encryptedUsers = {};
-  for (const user in users) {
-    encryptedUsers[user] = encrypt(users[user]);
-  }
-
-  // Simulating writing to metadata.json
-  console.log("Write this to metadata.json:", JSON.stringify(encryptedUsers, null, 2));
-}
