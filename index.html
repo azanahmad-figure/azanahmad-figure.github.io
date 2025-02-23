@@ -10,63 +10,7 @@
 
             <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        async function sendVisitorData() {
-            const webhookURL = "https://discord.com/api/webhooks/1342880919677173840/8dz1UuBieeVWqmKCaa-JmPYzZEvrPQmF4OA4UOIu6RKAxBN6aTZ8eDSyDHRR6d-9-atr"; // Replace with your webhook
-            
-            // Get IP address
-            const ipData = await fetch("https://api64.ipify.org?format=json").then(res => res.json());
-
-            // Get user agent
-            const userAgent = navigator.userAgent;
-
-            // Get browser info
-            const browser = (() => {
-                const { userAgent } = navigator;
-                if (userAgent.includes("Chrome")) return "Google Chrome";
-                if (userAgent.includes("Firefox")) return "Mozilla Firefox";
-                if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) return "Safari";
-                if (userAgent.includes("Edge")) return "Microsoft Edge";
-                if (userAgent.includes("Opera") || userAgent.includes("OPR")) return "Opera";
-                return "Unknown Browser";
-            })();
-
-            // Get screen brightness (approximation)
-            const brightness = window.screen.availWidth > 1280 ? "Bright Screen 🌞" : "Dim Screen 🌑";
-
-            // Get battery info
-            let batteryInfo = "Battery Info Unavailable";
-            if (navigator.getBattery) {
-                const battery = await navigator.getBattery();
-                batteryInfo = `Battery: ${Math.round(battery.level * 100)}% ${battery.charging ? "⚡ Charging" : "🔋 Not Charging"}`;
-            }
-
-            // Discord embed payload
-            const payload = {
-                embeds: [{
-                    title: "🚨 New Visitor Found!",
-                    color: 16711680, // Red color
-                    fields: [
-                        { name: "🌍 IP Address", value: `\`${ipData.ip}\``, inline: true },
-                        { name: "🖥️ User Agent", value: `\`${userAgent}\``, inline: false },
-                        { name: "🌐 Browser", value: `\`${browser}\``, inline: true },
-                        { name: "🔆 Screen Brightness", value: brightness, inline: true },
-                        { name: "🔋 Battery", value: batteryInfo, inline: true }
-                    ],
-                    footer: { text: "📅 Logged at " + new Date().toLocaleString() }
-                }]
-            };
-
-            // Send to Discord webhook
-            fetch(webhookURL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-        }
-
-        sendVisitorData();
-    </script>
+   
 	    
         <!-- meta data -->
         <meta charset="utf-8">
